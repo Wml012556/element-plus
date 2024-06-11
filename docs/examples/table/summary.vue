@@ -1,109 +1,79 @@
 <template>
-  <el-table :data="tableData" border show-summary style="width: 100%">
-    <el-table-column prop="id" label="ID" width="180" />
-    <el-table-column prop="name" label="Name" />
-    <el-table-column prop="amount1" sortable label="Amount 1" />
-    <el-table-column prop="amount2" sortable label="Amount 2" />
-    <el-table-column prop="amount3" sortable label="Amount 3" />
-  </el-table>
-
-  <el-table
-    :data="tableData"
-    border
-    height="200"
-    :summary-method="getSummaries"
-    show-summary
-    style="width: 100%; margin-top: 20px"
-  >
-    <el-table-column prop="id" label="ID" width="180" />
-    <el-table-column prop="name" label="Name" />
-    <el-table-column prop="amount1" label="Cost 1 ($)" />
-    <el-table-column prop="amount2" label="Cost 2 ($)" />
-    <el-table-column prop="amount3" label="Cost 3 ($)" />
+  <el-table :data="projectList" style="width: 100%">
+    <el-table-column prop="projectCode" label="项目代码"></el-table-column>
+    <el-table-column prop="projectName" label="项目名称"></el-table-column>
+    <el-table-column prop="type" label="类型"></el-table-column>
+    <el-table-column prop="result" label="结果"></el-table-column>
+    <el-table-column label="结果列表">
+      <template #default="{ row }">
+        <ul v-if="row.resultList">
+          <li v-for="(result, index) in row.resultList" :key="index">{{ result }}</li>
+        </ul>
+        <span v-else>无</span>
+      </template>
+    </el-table-column>
+    <el-table-column prop="normalValue" label="正常值"></el-table-column>
+    <el-table-column prop="projectContent" label="项目内容"></el-table-column>
+    <el-table-column prop="projectQuota" label="项目配额"></el-table-column>
+    <el-table-column prop="complete" label="完成"></el-table-column>
+    <el-table-column prop="pass" label="通过" :formatter="passFormatter"></el-table-column>
   </el-table>
 </template>
 
-<script lang="ts" setup>
-import { h } from 'vue'
-import type { VNode } from 'vue'
-import type { TableColumnCtx } from 'element-plus'
-
-interface Product {
-  id: string
-  name: string
-  amount1: string
-  amount2: string
-  amount3: number
-}
-
-interface SummaryMethodProps<T = Product> {
-  columns: TableColumnCtx<T>[]
-  data: T[]
-}
-
-const getSummaries = (param: SummaryMethodProps) => {
-  const { columns, data } = param
-  const sums: (string | VNode)[] = []
-  columns.forEach((column, index) => {
-    if (index === 0) {
-      sums[index] = h('div', { style: { textDecoration: 'underline' } }, [
-        'Total Cost',
-      ])
-      return
-    }
-    const values = data.map((item) => Number(item[column.property]))
-    if (!values.every((value) => Number.isNaN(value))) {
-      sums[index] = `$ ${values.reduce((prev, curr) => {
-        const value = Number(curr)
-        if (!Number.isNaN(value)) {
-          return prev + curr
-        } else {
-          return prev
+<script>
+export default {
+  data() {
+    return {
+      projectList: [
+        {
+          id: 13644,
+          equipmentRelId: 4381,
+          inspectionProjectId: 25,
+          delFlag: 0,
+          projectCode: "SJSX20240000018",
+          projectName: "大桃子项目3",
+          type: 3,
+          result: "洛杉矶湖人帆帆帆帆帆帆帆帆方法发放帆帆帆帆帆帆帆帆方法发放反反复复烦烦烦贩夫贩妇分帆帆帆帆帆帆帆帆方法发fffffffffffff,丹佛掘金反反复复烦烦烦贩夫贩妇分反反复复烦烦烦贩夫贩妇分反反复复烦烦烦贩夫贩妇分反反复复烦烦烦贩夫贩妇分方法方法放法ffffffffffffffffffff,太阳反反复复烦烦烦贩夫贩妇分贩夫贩妇fffff,e帆帆帆帆帆帆帆帆方法发放反反复复烦烦烦贩夫贩妇分方法方法非ffffffff反反复复烦烦烦贩夫贩妇分贩夫贩妇fffffffff",
+          resultList: [
+            "洛杉矶湖人帆帆帆帆帆帆帆帆方法发放帆帆帆帆帆帆帆帆方法发放反反复复烦烦烦贩夫贩妇分帆帆帆帆帆帆帆帆方法发fffffffffffff",
+            "丹佛掘金反反复复烦烦烦贩夫贩妇分反反复复烦烦烦贩夫贩妇分反反复复烦烦烦贩夫贩妇分反反复复烦烦烦贩夫贩妇分方法方法放法ffffffffffffffffffff",
+            "太阳反反复复烦烦烦贩夫贩妇分贩夫贩妇fffff",
+            "e帆帆帆帆帆帆帆帆方法发放反反复复烦烦烦贩夫贩妇分方法方法非ffffffff反反复复烦烦烦贩夫贩妇分贩夫贩妇fffffffff"
+          ],
+          normalValue: "1,2,3",
+          projectContent: "检查3",
+          projectQuota: "日标",
+          complete: null,
+          pass: false
+        },
+        {
+          id: 13645,
+          equipmentRelId: 4381,
+          inspectionProjectId: 23,
+          delFlag: 0,
+          projectCode: "SJSX20240000016",
+          projectName: "大桃子项目1",
+          type: 1,
+          result: "",
+          resultList: null,
+          normalValue: "",
+          projectContent: "检查1",
+          projectQuota: "国标",
+          complete: null,
+          pass: false
         }
-      }, 0)}`
-    } else {
-      sums[index] = 'N/A'
+        // 其他数据...
+      ]
+    };
+  },
+  methods: {
+    passFormatter(row, column, cellValue) {
+      return cellValue ? '是' : '否';
     }
-  })
-
-  return sums
-}
-
-const tableData: Product[] = [
-  {
-    id: '12987122',
-    name: 'Tom',
-    amount1: '234',
-    amount2: '3.2',
-    amount3: 10,
-  },
-  {
-    id: '12987123',
-    name: 'Tom',
-    amount1: '165',
-    amount2: '4.43',
-    amount3: 12,
-  },
-  {
-    id: '12987124',
-    name: 'Tom',
-    amount1: '324',
-    amount2: '1.9',
-    amount3: 9,
-  },
-  {
-    id: '12987125',
-    name: 'Tom',
-    amount1: '621',
-    amount2: '2.2',
-    amount3: 17,
-  },
-  {
-    id: '12987126',
-    name: 'Tom',
-    amount1: '539',
-    amount2: '4.1',
-    amount3: 15,
-  },
-]
+  }
+};
 </script>
+
+<style scoped>
+/* 可以根据需要添加样式 */
+</style>
